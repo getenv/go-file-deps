@@ -1,23 +1,29 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"os"
 	"sort"
+	"strings"
 
 	"golang.org/x/tools/go/packages"
 )
 
-// usage: go-file-deps $package
+// usage: go-file-deps [-r rule] $package
 // print the list of files required to build $package
 
 func main() {
+	rule := flag.String("r", "",
+		"Generate a Makefile rule with dependencies")
+
+	flag.Parse()
+
 	c := packages.Config{
 		Mode: packages.NeedDeps | packages.NeedImports | packages.NeedModule |
 			packages.NeedFiles | packages.NeedCompiledGoFiles,
 	}
 
-	pkgs, err := packages.Load(&c, os.Args[1])
+	pkgs, err := packages.Load(&c, flag.Arg(0))
 	if err != nil {
 		panic(err)
 	}
@@ -51,8 +57,15 @@ func main() {
 	}
 
 	sort.Strings(files)
-	for _, f := range files {
-		fmt.Println(f)
+
+	switch {
+	case len(*rule) > 0:
+		fmt.Printf("%s: %s\n", *rule, strings.Join(files, " "))
+
+	default:
+		for _, f := range files {
+			fmt.Println(f)
+		}
 	}
 }
 
