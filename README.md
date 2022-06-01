@@ -5,7 +5,7 @@ This tool prints the list of files required to build a Go package.
 
 ## Makefile integration
 
-Pass `-r rule` to print `rule: files\n` instead.
+Pass `-r rule` to print `rule: $(wildcard files...)\n` instead.
 
 ```makefile
 hello:

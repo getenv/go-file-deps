@@ -60,7 +60,7 @@ func main() {
 
 	switch {
 	case len(*rule) > 0:
-		fmt.Printf("%s: %s\n", *rule, strings.Join(files, " "))
+		fmt.Printf("%s: $(wildcard %s)\n", *rule, strings.Join(files, " "))
 
 	default:
 		for _, f := range files {
